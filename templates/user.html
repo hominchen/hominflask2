@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- 使用花括號來帶入動態變量或動態指令 -->
+<h1>user_name: bOb</h1>
+<p>使用upper全部大寫 {{ user_name|upper }}</p>
+<p>使用capitalize開頭大寫 {{ user_name|capitalize }}</p>
+<p>使用lower全部小寫 {{ user_name|lower }}</p>
+<br/><br/>
+
+<h1>stuff</h1>
+<p>正常 stuff 回傳 {{ stuff }}</p>
+<p>使用safe出現標籤效果 {{ stuff|safe }}</p>
+<p>使用striptags剝離標籤效果 {{ stuff|striptags }}</p>
+<br/><br/>
+
+<h1>傳入陣列</h1>
+<p>直接取出 - {{ favorite_pizza }}</p>
+<p>逐筆取出 -</p>
+{% for p in favorite_pizza %}
+    {{ p }}<br/>
+{% endfor %}
+<br/><br/>
+
+<h1>指定資料</h1>
+<p>用 .1 指定第二筆資料： {{ favorite_pizza.1 }}</p>
+<p>用 .3 指定第四筆資料： {{ favorite_pizza.3 }}</p>
+<br/><br/>
+
+<h1>迴圈加入條件式if</h1>
+{% for p in favorite_pizza %}
+    {% if p == 41 %}
+        {{ p + 100 }}<br/>
+    {% else %}
+        {{ p }}<br/>
+    {% endif %}
+{% endfor %}
+
+{% endblock %}

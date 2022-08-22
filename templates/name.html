@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+ 
+{% block content %}
+    <!-- flash -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+
+    {% if name %}
+        <H1>你好啊！ {{ name }}</H1>
+    {% else %}
+        <img src="{{ url_for('static', filename='images/hello.jpg') }}" width="60%" style="display:block; margin:auto">
+        <br/>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            <br/>
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+    {% endif %}
+{% endblock %}
