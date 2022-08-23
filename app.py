@@ -5,6 +5,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 #01 網站首頁
 @app.route("/")
@@ -56,7 +58,8 @@ def add_user():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
             user = Users(name=form.name.data,
-                    email=form.email.data)
+                    email=form.email.data,
+                    favorite_color=form.favorite_color.data)
             db.session.add(user)
             db.session.commit()
         
@@ -64,6 +67,7 @@ def add_user():
 
         form.name.data = ""
         form.email.data = ""
+        form.favorite_color.data = ""
         flash('使用者新增成功！')
     
     # 查詢db
@@ -83,6 +87,7 @@ def update(id):
     if request.method == 'POST':
         name_to_update.name=request.form['name']
         name_to_update.email=request.form['email']
+        name_to_update.favorite_color=request.form['favorite_color']
         try:
             db.session.commit()
             flash('使用者已成功更新')
@@ -117,6 +122,7 @@ class NamerForm(FlaskForm):
 class UserForm(FlaskForm):
     name = StringField("姓名", validators=[DataRequired()])
     email = StringField("信箱", validators=[DataRequired()])
+    favorite_color = StringField("喜愛的顏色")
     submit = SubmitField("確認")
 
 # ==== db model ====
@@ -124,6 +130,7 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(200), nullable=False, unique=True)
+    favorite_color = db.Column(db.String(120))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     
     def __repr__(self) -> str:
