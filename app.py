@@ -1,11 +1,13 @@
 from enum import unique
 from flask import Flask, render_template, flash, request
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms.validators import DataRequired, EqualTo, Length
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 app = Flask(__name__)
 
@@ -49,7 +51,7 @@ def name():
         name=name,
         form=form)
 
-#05 Add User
+#05 使用者增加
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
     name = None
@@ -57,9 +59,13 @@ def add_user():
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
+            # Hash加密
+            hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
+            
             user = Users(name=form.name.data,
                     email=form.email.data,
-                    favorite_color=form.favorite_color.data)
+                    favorite_color=form.favorite_color.data,
+                    password_hash=hashed_pw)
             db.session.add(user)
             db.session.commit()
         
@@ -68,6 +74,7 @@ def add_user():
         form.name.data = ""
         form.email.data = ""
         form.favorite_color.data = ""
+        form.password_hash.data = ""
         flash('使用者新增成功！')
     
     # 查詢db
@@ -146,9 +153,14 @@ class NamerForm(FlaskForm):
     submit = SubmitField("確認")
 
 class UserForm(FlaskForm):
-    name = StringField("姓名", validators=[DataRequired()])
+    name = StringField("姓名", validators=[DataRequired()])  
     email = StringField("信箱", validators=[DataRequired()])
     favorite_color = StringField("喜愛的顏色")
+    password_hash = PasswordField('請輸入密碼', 
+        validators=[DataRequired(), 
+        EqualTo('password_hash2', message='密碼必須匹配')])
+    # 驗證的密碼並不會被儲存到資料庫，用一個變量來承接
+    password_hash2 = PasswordField('請再次輸入密碼', validators=[DataRequired()])
     submit = SubmitField("確認")
 
 # ==== db model ====
@@ -157,8 +169,19 @@ class Users(db.Model):
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(200), nullable=False, unique=True)
     favorite_color = db.Column(db.String(120))
+    password_hash = db.Column(db.String(128))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
+    # Hash password
+    @property
+    def password(self):
+        raise AttributeError("哈希屬性不可讀取！")
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
     def __repr__(self) -> str:
         return '<Name %r>' % self.name
 
