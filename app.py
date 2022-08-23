@@ -11,8 +11,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "secret key 123456987"
 
 # === SQL ===
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-# ====
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+# 'mysql://使用者名:密碼@url/資料庫名'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:12345678@localhost/our_users2'
+
+
 db = SQLAlchemy(app)
 
 #01 網站首頁
