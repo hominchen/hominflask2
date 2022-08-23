@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+ 
+{% block content %}
+    <!-- 遍歷所有flash訊息 -->
+    {% for message in get_flashed_messages() %}
+        <!-- 從Bootstrap導入alert訊息 -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+ 
+    <!-- 用if判斷是否已帶入信箱 -->
+    {% if email %}
+        <h1>信箱: {{ email }}</h1>
+        <h1>密碼: {{ password }}</h1>
+        <br/>
+        <h2>發現以下資訊：</h2>
+        姓名： {{ pw_to_check.name }}<br/>
+        信箱： {{ pw_to_check.email }}<br/>
+        密碼： {{ pw_to_check.password_hash}}<br/>
+        <p>密碼驗證是否相同？ {{ passed }}</p>
+ 
+    {% else %}
+        <h1>請輸入信箱與密碼?</h1>
+        <br/>
+        <form method="POST">
+            <!-- 隱藏標籤 -->
+            {{ form.hidden_tag() }}
+            <!-- 信箱 -->
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control") }}
+            <br/>
+ 
+            <!-- 密碼 -->
+            {{ form.password_hash.label(class="form-label") }}
+            {{ form.password_hash(class="form-control") }}
+            <br/>
+ 
+            {{ form.submit(class="btn btn-primary") }}
+
+            <p>密碼驗證是否相同？ {{ passed }}</p>
+
+        </form>
+    {% endif %}
+ 
+{% endblock %}

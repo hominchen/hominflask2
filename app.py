@@ -139,6 +139,34 @@ def delete(id):
             our_users=our_users,
             id=id)
 
+#08 Hash相符測試
+@app.route('/test_pw', methods=['GET', 'POST'])
+def test_pw():
+    email = None
+    password = None
+    pw_to_check = None
+    passed = None
+    # 需要創建PasswordForm的表單
+    form = PasswordForm()
+     
+    # 驗證表單
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password_hash.data
+        # 將表單內容清除
+        form.email.data = ''
+        form.password_hash.data = ''
+        # 加入表單提交成功的flash功能
+        flash('表單提交成功')        
+        pw_to_check = Users.query.filter_by(email=email).first()
+        passed = check_password_hash(pw_to_check.password_hash, password)
+    return render_template("test_pw.html",
+        email = email,
+        password = password,
+        pw_to_check = pw_to_check,
+        passed = passed,
+        form = form)
+
 #03 錯誤頁面
 @app.errorhandler(404)
 def page_not_found(e):
@@ -162,6 +190,13 @@ class UserForm(FlaskForm):
     # 驗證的密碼並不會被儲存到資料庫，用一個變量來承接
     password_hash2 = PasswordField('請再次輸入密碼', validators=[DataRequired()])
     submit = SubmitField("確認")
+
+#08 Hash相符測試
+class PasswordForm(FlaskForm):  
+    email = StringField("你的信箱?", validators=[DataRequired()])
+    password_hash = PasswordField("你的密碼?", validators=[DataRequired()])
+    submit = SubmitField("確認")
+
 
 # ==== db model ====
 class Users(db.Model):
