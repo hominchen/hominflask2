@@ -11,6 +11,11 @@
 
     {% if name %}
         <H1>你好啊！ {{ name }}</H1>
+
+        <!-- javascript -->
+        <p id="demo">一小段文字...</p>
+        <script src="{{ url_for('static', filename='js/myfile.js') }}"></script>
+
     {% else %}
         <img src="{{ url_for('static', filename='images/hello.jpg') }}" width="60%" style="display:block; margin:auto">
         <br/>
