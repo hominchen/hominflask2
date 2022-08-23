@@ -12,6 +12,7 @@
     {% if name %}
         <h1>Hello {{ name }}</h1>
         <br/><br/>
+
     {% else %}
         <h1>使用者列表：</h1>
         <br/>
@@ -28,11 +29,15 @@
                 {{ form.submit(class="btn btn-primary") }}
             </form>
         </div>
-        <br/><br/><br/>
-
-        <!-- db data -->
-        {% for our_user in our_users %}
-            {{ our_user.id }}. {{ our_user.name }} - {{ our_user.email }}<br/>
-        {% endfor %}
+        <br/><br/>
     {% endif %}
+
+    <table class="table table-hover table-bordered table-striped">
+        {% for our_user in our_users %}
+            <tr>
+                <td>{{ our_user.id }}. {{ our_user.name }} - {{ our_user.email }}</td>
+                <td><a href="{{ url_for('update', id=our_user.id) }}">編輯</a></td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

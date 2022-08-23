@@ -1,5 +1,5 @@
 from enum import unique
-from flask import Flask, render_template, flash
+from flask import Flask, render_template, flash, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
@@ -11,9 +11,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "secret key 123456987"
 
 # === SQL ===
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 # 'mysql://使用者名:密碼@url/資料庫名'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:12345678@localhost/our_users2'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345678@localhost/our_users2'
 
 
 db = SQLAlchemy(app)
@@ -21,7 +21,6 @@ db = SQLAlchemy(app)
 #01 網站首頁
 @app.route("/")
 def index():
-    # return "<h1>Hello World!<h1>"
     return render_template("index.html")
 
 #02 使用者回傳
@@ -58,12 +57,11 @@ def add_user():
         if user is None:
             user = Users(name=form.name.data,
                     email=form.email.data)
-            # 儲存到資料表
             db.session.add(user)
             db.session.commit()
         
         name = form.name.data
-        # 清除頁面
+
         form.name.data = ""
         form.email.data = ""
         flash('使用者新增成功！')
@@ -74,7 +72,34 @@ def add_user():
     return render_template("add_user.html",
         form=form,
         name=name,
-        our_users=our_users)
+        our_users=our_users
+        )
+
+#06 使用者更新
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    form=UserForm()
+    name_to_update=Users.query.get_or_404(id)
+    if request.method == 'POST':
+        name_to_update.name=request.form['name']
+        name_to_update.email=request.form['email']
+        try:
+            db.session.commit()
+            flash('使用者已成功更新')
+            return render_template('update.html',
+                form=form,
+                name_to_update=name_to_update
+                )
+        except:
+            flash("看來有些問題，請再試試！")
+            return render_template("update.html",
+                form=form,
+                name_to_update=name_to_update
+                )
+    else:
+        return render_template("update.html",
+            form=form,
+            name_to_update=name_to_update)
 
 #03 錯誤頁面
 @app.errorhandler(404)
