@@ -104,7 +104,33 @@ def update(id):
     else:
         return render_template("update.html",
             form=form,
-            name_to_update=name_to_update)
+            name_to_update=name_to_update,
+            id=id)
+
+#07 刪除
+@app.route('/delete/<int:id>')
+def delete(id):
+    user_to_delete = Users.query.get_or_404(id)
+    name = None
+    form = UserForm()
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        flash('刪除資料成功')
+
+        our_users = Users.query.order_by(Users.date_added)
+        return render_template("add_user.html",
+            form=form,
+            name=name,
+            our_users=our_users,
+            id=id)
+    except:
+        flash('刪除使用者有錯誤，請再次確認。')
+        return render_template("add_user.html",
+            form=form,
+            name=name,
+            our_users=our_users,
+            id=id)
 
 #03 錯誤頁面
 @app.errorhandler(404)

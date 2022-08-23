@@ -40,6 +40,7 @@
             <tr>
                 <td>{{ our_user.id }}. {{ our_user.name }} - {{ our_user.email }} - {{ our_user.favorite_color }}</td>
                 <td><a href="{{ url_for('update', id=our_user.id) }}">編輯</a></td>
+                <td><a href="{{ url_for('delete', id=our_user.id) }}">刪除</a></td>
             </tr>
         {% endfor %}
     </table>
