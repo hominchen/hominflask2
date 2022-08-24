@@ -228,6 +228,20 @@ def edit_post(id):
     form.slug.data = post.slug
     form.content.data = post.content
     return render_template('edit_post.html', form=form)
+#10-5 delete刪除
+@app.route('/post/delete/<int:id>')
+def delete_post(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    try:
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        flash('內容已被刪除！')
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template("posts.html", posts=posts)
+    except:
+        flash('內容無法刪除...')
+        posts = Posts.query.order_by(Posts.date_posted)
+        return render_template("posts.html", posts=posts)
 
 #03 錯誤頁面
 @app.errorhandler(404)
