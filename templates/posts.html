@@ -11,11 +11,15 @@
 
     {% for post in posts %}
         <div class="shadow p-3 mb-5 bg-body rounded">
-            <h2>{{ post.title }}</h2>
+            <h3><a href="{{ url_for('post', id=post.id)}}">{{ post.title }}</a></h3>
             By: {{ post.author }}<br/>
             <small>文號：{{ post.slug }} | {{ post.date_posted }}</small><br/>
             <br/>
-            {{ post.content }}
+            {{ post.content }}<br/>
+            <br/>
+            <a href="{{ url_for('post', id=post.id)}}" class="btn btn-outline-secondary btn-sm">檢視</a>
+            <a href="{{ url_for('edit_post', id=post.id)}}" class="btn btn-outline-secondary btn-sm">編輯</a>
+            <br/>
         </div>
     {% endfor %}
 
