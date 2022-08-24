@@ -199,6 +199,12 @@ def add_post():
         flash("Blog 訊息張貼成功")
     return render_template("add_post.html", form=form)
 
+#11 Posts文章集
+@app.route('/posts')
+def posts():
+    posts = Posts.query.order_by(Posts.date_posted)
+    return render_template('posts.html', posts=posts)
+
 #03 錯誤頁面
 @app.errorhandler(404)
 def page_not_found(e):
