@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 from wtforms.widgets import TextArea
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
 app = Flask(__name__)
 
@@ -22,6 +23,42 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+#11-3 login manager登入管理器
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
+#11-1 login登入
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user:
+            if check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                flash('登入成功')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('你的密碼錯誤！')
+        else:
+            flash('帳號似乎不存在...')
+    return render_template('login.html', form=form)
+#11-2 Dashboard個人資訊
+@app.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+#11-4 logout登出
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    flash('成功登出！')
+    return redirect(url_for('login'))
 
 #01 網站首頁
 @app.route("/")
@@ -64,6 +101,7 @@ def add_user():
             hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
             
             user = Users(name=form.name.data,
+                    username = form.username.data,
                     email=form.email.data,
                     favorite_color=form.favorite_color.data,
                     password_hash=hashed_pw)
@@ -73,6 +111,7 @@ def add_user():
         name = form.name.data
 
         form.name.data = ""
+        form.username.data = ""
         form.email.data = ""
         form.favorite_color.data = ""
         form.password_hash.data = ""
@@ -257,7 +296,8 @@ class NamerForm(FlaskForm):
     submit = SubmitField("確認")
 
 class UserForm(FlaskForm):
-    name = StringField("姓名", validators=[DataRequired()])  
+    name = StringField("姓名", validators=[DataRequired()])
+    username = StringField("暱稱")  
     email = StringField("信箱", validators=[DataRequired()])
     favorite_color = StringField("喜愛的顏色")
     password_hash = PasswordField('請輸入密碼', 
@@ -281,9 +321,16 @@ class PostForm(FlaskForm):
     slug = StringField("文號", validators=[DataRequired()])
     submit = SubmitField("確認")
 
+#11 Login登入
+class LoginForm(FlaskForm):
+    email = StringField("信箱", validators=[DataRequired()])
+    password = PasswordField("密碼", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
 # ==== db model ====
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False)
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(200), nullable=False, unique=True)
     favorite_color = db.Column(db.String(120))

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+ 
+{% block content %}
+    <!-- flash -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+
+    <h3>個人訊息版</h3>
+    <a href="{{ url_for('logout') }}">登出</a>
+
+{% endblock %}
