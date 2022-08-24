@@ -7,7 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime, date
+from wtforms.widgets import TextArea
 
 app = Flask(__name__)
 
@@ -167,6 +168,37 @@ def test_pw():
         passed = passed,
         form = form)
 
+#09 JSON
+@app.route('/date')
+def get_current_date():
+    favorite_pizza = {
+        "Bob":"臘腸",
+        "Kenny": "Cheese",
+        "Mary": "Mushroom"
+    }
+    return favorite_pizza
+    # return {'Date': date.today()}
+
+#10 Post
+@app.route('/add-post', methods=['GET', 'POST'])
+def add_post():
+    form=PostForm()
+    if form.validate_on_submit():
+        post = Posts(
+            title=form.title.data, 
+            content=form.content.data, 
+            author=form.author.data, 
+            slug=form.slug.data
+            )
+        form.title.data = ""
+        form.content.data = ""
+        form.author.data = ""
+        form.slug.data = ""
+        db.session.add(post)
+        db.session.commit()
+        flash("Blog 訊息張貼成功")
+    return render_template("add_post.html", form=form)
+
 #03 錯誤頁面
 @app.errorhandler(404)
 def page_not_found(e):
@@ -197,6 +229,13 @@ class PasswordForm(FlaskForm):
     password_hash = PasswordField("你的密碼?", validators=[DataRequired()])
     submit = SubmitField("確認")
 
+#10 Post
+class PostForm(FlaskForm):
+    title = StringField("標題", validators=[DataRequired()])
+    content = StringField("內容", validators=[DataRequired()], widget=TextArea())
+    author = StringField("作者", validators=[DataRequired()])
+    slug = StringField("文號", validators=[DataRequired()])
+    submit = SubmitField("確認")
 
 # ==== db model ====
 class Users(db.Model):
@@ -220,6 +259,14 @@ class Users(db.Model):
     def __repr__(self) -> str:
         return '<Name %r>' % self.name
 
+#10 Post
+class Posts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text)
+    author = db.Column(db.String(255))
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    slug = db.Column(db.String(255))
 
 
 if __name__ == "__main__":
