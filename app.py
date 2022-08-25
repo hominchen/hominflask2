@@ -10,7 +10,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 from wtforms.widgets import TextArea
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from flask_moment import Moment
 
 app = Flask(__name__)
 
@@ -224,6 +223,7 @@ def get_current_date():
 
 #10-1 Post
 @app.route('/add-post', methods=['GET', 'POST'])
+# @login_required
 def add_post():
     form=PostForm()
     if form.validate_on_submit():
@@ -243,16 +243,19 @@ def add_post():
     return render_template("add_post.html", form=form)
 #10-2 Posts文章集
 @app.route('/posts')
+@login_required
 def posts():
     posts = Posts.query.order_by(Posts.date_posted)
     return render_template('posts.html', posts=posts)
 #10-3 post內文
 @app.route('/posts/<int:id>')
+@login_required
 def post(id):
     post=Posts.query.get_or_404(id)
     return render_template('post.html', post=post)
 #10-4 edit文章編輯
 @app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_post(id):
     post = Posts.query.get_or_404(id)
     form = PostForm()

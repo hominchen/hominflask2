@@ -9,26 +9,31 @@
     </div>
     {% endfor %}
 
-    <h1>張貼文章...</h1>
-    <br/>
-    <div class="shadow p-3 mb-5 bg-body rounded">
-        <form method="POST">
-            {{ form.hidden_tag() }}
+    {% if current_user.is_authenticated %}
+        <h1>張貼文章...</h1>
+        <br/>
+        <div class="shadow p-3 mb-5 bg-body rounded">
+            <form method="POST">
+                {{ form.hidden_tag() }}
 
-            {{ form.title.label(class="form-label") }}
-            {{ form.title(class="form-control") }}
-            <br/>
-            {{ form.author.label(class="form-label") }}
-            {{ form.author(class="form-control") }}
-            <br/>
-            {{ form.slug.label(class="form-label") }}
-            {{ form.slug(class="form-control") }}
-            <br/>
-            {{ form.content.label(class="form-label") }}
-            {{ form.content(class="form-control", rows=5) }}
-            <br/>
-            {{ form.submit(class="btn btn-primary") }}
-        </form>
-    </div>
-
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control") }}
+                <br/>
+                {{ form.author.label(class="form-label") }}
+                {{ form.author(class="form-control") }}
+                <br/>
+                {{ form.slug.label(class="form-label") }}
+                {{ form.slug(class="form-control") }}
+                <br/>
+                {{ form.content.label(class="form-label") }}
+                {{ form.content(class="form-control", rows=5) }}
+                <br/>
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
+        </div>
+    {% else %}
+        <h2>必須先登入...</h2>
+        <p>抱歉，你需要先登入...</p>
+        <a href="{{ url_for('login') }}">登入</a>
+    {% endif %}
 {% endblock %}
