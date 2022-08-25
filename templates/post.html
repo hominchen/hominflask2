@@ -11,7 +11,7 @@
 
     <div class="shadow p-3 mb-5 bg-body rounded">
         <h3>{{ post.title }}</h3>
-        By: {{ post.author }}<br/>
+        By: {{ post.poster.name }} {{ post.poster.email }}<br/>
         <small>文號：{{ post.slug }} | {{ post.date_posted }}</small><br/>
         <br/>
         {{ post.content }}

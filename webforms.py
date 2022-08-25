@@ -30,7 +30,7 @@ class PasswordForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField("標題", validators=[DataRequired()])
     content = StringField("內容", validators=[DataRequired()], widget=TextArea())
-    author = StringField("作者", validators=[DataRequired()])
+    author = StringField("作者")
     slug = StringField("文號", validators=[DataRequired()])
     submit = SubmitField("確認")
 
