@@ -52,9 +52,31 @@ def login():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    
-    return render_template('dashboard.html'
-        )
+    form = UserForm()
+    id = current_user.id
+    name_to_update = Users.query.get_or_404(id)
+    if request.method == 'POST':
+        name_to_update.name=request.form['name']
+        name_to_update.email=request.form['email']
+        name_to_update.favorite_color=request.form['favorite_color']
+        name_to_update.username=request.form['username']
+        try:
+            db.session.commit()
+            flash('使用者已成功更新')
+            return render_template('update.html',
+                form=form,
+                name_to_update=name_to_update)
+        except:
+            flash("看來有些問題，請再試試！")
+            return render_template("update.html",
+                form=form,
+                name_to_update=name_to_update)
+    else:
+        return render_template("dashboard.html",
+            form=form,
+            name_to_update=name_to_update,
+            id=id)
+
 #11-4 logout登出
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -95,7 +117,7 @@ def name():
 #05 使用者增加
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
-    name = None
+    email = None
     form = UserForm()
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
@@ -125,7 +147,7 @@ def add_user():
 
     return render_template("add_user.html",
         form=form,
-        name=name,
+        email=email,
         our_users=our_users
         )
 
@@ -138,6 +160,7 @@ def update(id):
         name_to_update.name=request.form['name']
         name_to_update.email=request.form['email']
         name_to_update.favorite_color=request.form['favorite_color']
+        name_to_update.username=request.form['username']
         try:
             db.session.commit()
             flash('使用者已成功更新')
