@@ -28,13 +28,23 @@
             <a class="nav-link active" aria-current="page" href="{{ url_for('posts') }}">已發布文章</a>
           </li>
 
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('add_user') }}">新增使用者</a>
-          </li>
+          {% if current_user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('dashboard') }}">管理</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('logout') }}">登出</a>
+            </li>
 
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('login') }}">登入</a>
-          </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{{ url_for('login') }}">登入</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{{ url_for('add_user') }}">註冊</a>
+            </li>
+          {% endif %}
         </ul>
 
         <form class="d-flex" role="search">

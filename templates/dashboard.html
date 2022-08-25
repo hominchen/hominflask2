@@ -10,6 +10,23 @@
     {% endfor %}
 
     <h3>個人訊息版</h3>
-    <a href="{{ url_for('logout') }}">登出</a>
+    <br/>
+    <div class="card">
+        <div class="card-header">
+            {{ current_user.name }}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">使用者資訊</h5>
+          <p class="card-text">
+            <strong>ID:</strong>{{ current_user.id }}<br/>
+            <strong>姓名：</strong>{{ current_user.name }}<br/>
+            <strong>暱稱：</strong>{{ current_user.username }}<br/>
+            <strong>信箱：</strong>{{ current_user.email }}<br/>
+            <strong>喜愛顏色：</strong>{{ current_user.favorite_color }}<br/>
+            <strong>註冊日：</strong>{{ current_user.date_added }}<br/>
+          </p>
+          <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">登出</a>
+        </div>
+      </div>
 
 {% endblock %}

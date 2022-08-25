@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 from wtforms.widgets import TextArea
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_moment import Moment
 
 app = Flask(__name__)
 
@@ -52,11 +53,14 @@ def login():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    
+    return render_template('dashboard.html'
+        )
 #11-4 logout登出
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
+    logout_user()
     flash('成功登出！')
     return redirect(url_for('login'))
 
@@ -154,7 +158,7 @@ def update(id):
             name_to_update=name_to_update,
             id=id)
 
-#07 刪除
+#07 刪除使用者
 @app.route('/delete/<int:id>')
 def delete(id):
     user_to_delete = Users.query.get_or_404(id)
