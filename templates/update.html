@@ -8,20 +8,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endfor %}
- 
-    {% if name %}
-        <h1>使用者更新</h1> 
-        <br/><br/><br/>
 
-        <table class="table table-hover table-bordered table-striped">
-            {% for our_user in our_users %}
-                <tr>
-                    <td>{{ our_user.id }}. {{ our_user.name }} - {{ our_user.email }} - {{ our_user.favorite_color }}</td>
-                </tr>
-            {% endfor %}
-        </table>
- 
-    {% else %}
+    {% if id == current_user.id %}
         <h1>請更新使用者列表：</h1>
         <br/>
 
@@ -48,7 +36,18 @@
             </form>
         </div>
     <br/><br/><br/>
- 
+
+    {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            你無法編輯這個使用者...
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <h2>拒絕訪問！</h2>
+        <p>目前頁面的ID: {{ id }}</p>
+        <p>回傳的ID: {{ current_user.id }}</p>
+        <p>抱歉！ 你無法訪問這個用戶...</p>
+
     {% endif %}
  
 {% endblock %}

@@ -149,6 +149,7 @@ def add_user():
         )
 #05-2 使用者更新
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update(id):
     form=UserForm()
     name_to_update=Users.query.get_or_404(id)
@@ -162,13 +163,15 @@ def update(id):
             flash('使用者已成功更新')
             return render_template('update.html',
                 form=form,
-                name_to_update=name_to_update
+                name_to_update=name_to_update,
+                id=id
                 )
         except:
             flash("看來有些問題，請再試試！")
             return render_template("update.html",
                 form=form,
-                name_to_update=name_to_update
+                name_to_update=name_to_update,
+                id=id
                 )
     else:
         return render_template("update.html",
