@@ -1,12 +1,15 @@
 from enum import unique
 from flask import Flask, render_template, flash, request, redirect, url_for
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms.validators import DataRequired, EqualTo, Length
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
+from wtforms.widgets import TextArea
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from webforms import NamerForm, UserForm, PasswordForm, PostForm, LoginForm
 
 app = Flask(__name__)
 
@@ -60,12 +63,12 @@ def dashboard():
         try:
             db.session.commit()
             flash('使用者已成功更新')
-            return render_template('dashboard.html',
+            return render_template('update.html',
                 form=form,
                 name_to_update=name_to_update)
         except:
             flash("看來有些問題，請再試試！")
-            return render_template("dashboard.html",
+            return render_template("update.html",
                 form=form,
                 name_to_update=name_to_update)
     else:
@@ -111,7 +114,7 @@ def name():
         name=name,
         form=form)
 
-#05-1 使用者增加
+#05 使用者增加
 @app.route('/user/add', methods=['GET', 'POST'])
 def add_user():
     email = None
@@ -130,7 +133,7 @@ def add_user():
             db.session.add(user)
             db.session.commit()
         
-        # name = form.name.data
+        name = form.name.data
 
         form.name.data = ""
         form.username.data = ""
@@ -147,7 +150,8 @@ def add_user():
         email=email,
         our_users=our_users
         )
-#05-2 使用者更新
+
+#06 使用者更新
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
     form=UserForm()
@@ -175,7 +179,8 @@ def update(id):
             form=form,
             name_to_update=name_to_update,
             id=id)
-#05-3 刪除使用者
+
+#07 刪除使用者
 @app.route('/delete/<int:id>')
 def delete(id):
     user_to_delete = Users.query.get_or_404(id)
@@ -199,7 +204,8 @@ def delete(id):
             name=name,
             our_users=our_users,
             id=id)
-#05-4 Hash相符測試
+
+#08 Hash相符測試
 @app.route('/test_pw', methods=['GET', 'POST'])
 def test_pw():
     email = None
@@ -314,7 +320,42 @@ def page_not_found(e):
 def page_not_found(e):
     return render_template("500.html"), 500
 
+# ==== FlaskForm ====
+class NamerForm(FlaskForm):
+    name = StringField("請問你的名子？", validators=[DataRequired()])
+    submit = SubmitField("確認")
 
+class UserForm(FlaskForm):
+    name = StringField("姓名", validators=[DataRequired()])
+    username = StringField("暱稱")  
+    email = StringField("信箱", validators=[DataRequired()])
+    favorite_color = StringField("喜愛的顏色")
+    password_hash = PasswordField('請輸入密碼', 
+        validators=[DataRequired(), 
+        EqualTo('password_hash2', message='密碼必須匹配')])
+    # 驗證的密碼並不會被儲存到資料庫，用一個變量來承接
+    password_hash2 = PasswordField('請再次輸入密碼', validators=[DataRequired()])
+    submit = SubmitField("確認")
+
+#08 Hash相符測試
+class PasswordForm(FlaskForm):  
+    email = StringField("你的信箱?", validators=[DataRequired()])
+    password_hash = PasswordField("你的密碼?", validators=[DataRequired()])
+    submit = SubmitField("確認")
+
+#10 Post
+class PostForm(FlaskForm):
+    title = StringField("標題", validators=[DataRequired()])
+    content = StringField("內容", validators=[DataRequired()], widget=TextArea())
+    author = StringField("作者", validators=[DataRequired()])
+    slug = StringField("文號", validators=[DataRequired()])
+    submit = SubmitField("確認")
+
+#11 Login登入
+class LoginForm(FlaskForm):
+    email = StringField("信箱", validators=[DataRequired()])
+    password = PasswordField("密碼", validators=[DataRequired()])
+    submit = SubmitField("Submit")
 
 # ==== db model ====
 class Users(db.Model, UserMixin):
