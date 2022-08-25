@@ -266,7 +266,7 @@ def add_post():
     return render_template("add_post.html", form=form)
 #10-2 Posts文章集
 @app.route('/posts')
-@login_required
+# @login_required
 def posts():
     posts = Posts.query.order_by(Posts.date_posted)
     return render_template('posts.html', posts=posts)
@@ -291,24 +291,37 @@ def edit_post(id):
         db.session.commit()
         flash('文章已更新成功！')
         return redirect(url_for('post', id=post.id))
-    # 先前資料
-    form.title.data = post.title
-    # form.author.data = post.author
-    form.slug.data = post.slug
-    form.content.data = post.content
-    return render_template('edit_post.html', form=form)
-#10-5 delete刪除
-@app.route('/post/delete/<int:id>')
-def delete_post(id):
-    post_to_delete = Posts.query.get_or_404(id)
-    try:
-        db.session.delete(post_to_delete)
-        db.session.commit()
-        flash('內容已被刪除！')
+    # 作者id比對
+    if current_user.id == post.poster_id:
+        form.title.data = post.title
+        # form.author.data = post.author
+        form.slug.data = post.slug
+        form.content.data = post.content
+        return render_template('edit_post.html', form=form)
+    else:
+        flash('你不是作者，無權編輯！')
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
-    except:
-        flash('內容無法刪除...')
+
+#10-5 delete刪除
+@app.route('/post/delete/<int:id>')
+@login_required
+def delete_post(id):
+    post_to_delete = Posts.query.get_or_404(id)
+    id = current_user.id
+    if id == post_to_delete.id:
+        try:
+            db.session.delete(post_to_delete)
+            db.session.commit()
+            flash('內容已被刪除！')
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("posts.html", posts=posts)
+        except:
+            flash('內容無法刪除...')
+            posts = Posts.query.order_by(Posts.date_posted)
+            return render_template("posts.html", posts=posts)
+    else:
+        flash('你沒有權利刪除...')
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
 

@@ -18,9 +18,11 @@
             {{ post.content }}<br/>
             <br/>
             <a href="{{ url_for('post', id=post.id)}}" class="btn btn-outline-secondary btn-sm">檢視</a>
-            <a href="{{ url_for('edit_post', id=post.id)}}" class="btn btn-outline-secondary btn-sm">編輯</a>
-            <a href="{{ url_for('delete_post', id=post.id)}}" class="btn btn-danger btn-sm">刪除</a>
-            <br/>
+            {% if current_user.id == post.poster_id %}
+                <a href="{{ url_for('edit_post', id=post.id)}}" class="btn btn-outline-secondary btn-sm">編輯</a>
+                <a href="{{ url_for('delete_post', id=post.id)}}" class="btn btn-danger btn-sm">刪除</a>
+                <br/>
+            {% endif %}
         </div>
     {% endfor %}
 
