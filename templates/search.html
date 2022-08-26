@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+ 
+{% block content %}
+ 
+    <br/>
+    <h2>搜尋結果...</h2>
+    <div>
+        搜尋的關鍵字： {{ searched }}<br/>
+        回傳的posts: {{ posts }}
+    </div>
+    <br/>
+    <div>
+        <!-- 用迴圈取出posts的標題 -->
+        迴圈取出posts的標題:<br/>
+        {% for post in posts %}
+            <a href="{{ url_for('post', id=post.id) }}">
+                {{ post.title }}
+            </a><br/>
+        {% endfor %}
+    </div>
+{% endblock %}

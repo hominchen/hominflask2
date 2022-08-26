@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from webforms import NamerForm, UserForm, PasswordForm, PostForm, LoginForm
+from webforms import NamerForm, UserForm, PasswordForm, PostForm, LoginForm, SearchForm
 from flask_ckeditor import CKEditor
 
 app = Flask(__name__)
@@ -336,6 +336,27 @@ def admin():
     else:
         flash('抱歉！ 你沒有相關權限...')
     return redirect(url_for('dashboard'))
+
+#12 search檢索
+@app.route('/search', methods=['POST'])
+def search():
+    form = SearchForm()
+    posts = Posts.query
+    if form.validate_on_submit():
+        post.searched = form.searched.data
+        posts = posts.filter(Posts.content.like('%' + post.searched + '%'))
+        posts = posts.order_by(Posts.title).all()
+        return render_template("search.html", 
+            form=form,
+            searched=post.searched,
+            posts = posts)
+    else:
+        flash('抱歉！ 查不到相關的結果...')
+        return render_template('index.html')
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
 
 #03 錯誤頁面
 @app.errorhandler(404)
