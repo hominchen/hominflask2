@@ -327,6 +327,16 @@ def delete_post(id):
         posts = Posts.query.order_by(Posts.date_posted)
         return render_template("posts.html", posts=posts)
 
+#12 admin管理者頁面
+@app.route('/admin')
+def admin():
+    id = current_user.id
+    if id == 1:
+        return render_template('admin.html')
+    else:
+        flash('抱歉！ 你沒有相關權限...')
+    return redirect(url_for('dashboard'))
+
 #03 錯誤頁面
 @app.errorhandler(404)
 def page_not_found(e):
