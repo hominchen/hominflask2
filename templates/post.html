@@ -14,7 +14,11 @@
         By: {{ post.poster.name }} {{ post.poster.email }}<br/>
         <small>文號：{{ post.slug }} | {{ post.date_posted }}</small><br/>
         <br/>
-        {{ post.content|safe }}
+        {{ post.content|safe }}<br/>
+
+        {% if post.poster.about_author %}
+            {{ post.poster.about_author }}<br/>
+        {% endif %}
     </div>
     <a href="{{ url_for('posts')}}" class="btn btn-outline-secondary btn-sm">回到文章集</a>
     {% if current_user.id == post.poster_id %}

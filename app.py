@@ -59,6 +59,7 @@ def dashboard():
         name_to_update.email=request.form['email']
         name_to_update.favorite_color=request.form['favorite_color']
         name_to_update.username=request.form['username']
+        name_to_update.about_author=request.form['about_author']
         try:
             db.session.commit()
             flash('使用者已成功更新')
@@ -373,6 +374,7 @@ class Users(db.Model, UserMixin):
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(200), nullable=False, unique=True)
     favorite_color = db.Column(db.String(120))
+    about_author = db.Column(db.Text())
     password_hash = db.Column(db.String(128))
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     # relationship - send 暗號'poster'給Posts的db

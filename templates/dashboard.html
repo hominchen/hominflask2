@@ -18,19 +18,32 @@
         <div class="card-body">
           <h5 class="card-title">使用者資訊</h5>
           <p class="card-text">
-            <strong>ID:</strong>{{ current_user.id }}<br/>
-            <strong>姓名：</strong>{{ current_user.name }}<br/>
-            <strong>暱稱：</strong>{{ current_user.username }}<br/>
-            <strong>信箱：</strong>{{ current_user.email }}<br/>
-            <strong>喜愛顏色：</strong>{{ current_user.favorite_color }}<br/>
-            <strong>註冊日：</strong>{{ current_user.date_added }}<br/>
+            <div class="container">
+              <div class="row">
+                <div class="col-8">
+                  <strong>ID:</strong>{{ current_user.id }}<br/>
+                  <strong>姓名：</strong>{{ current_user.name }}<br/>
+                  <strong>暱稱：</strong>{{ current_user.username }}<br/>
+                  <strong>信箱：</strong>{{ current_user.email }}<br/>
+                  <strong>喜愛顏色：</strong>{{ current_user.favorite_color }}<br/>
+                  <strong>關於作者：</strong>{{ current_user.about_author }}<br/>
+                  <strong>註冊日：</strong>{{ current_user.date_added }}<br/>
           </p>
-          <a href="{{ url_for('update', id=current_user.id) }}" class="btn btn-outline-warning btn-sm">更新</a>
-          <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">登出</a>
-          <a href="{{ url_for('delete', id=current_user.id) }}" class="btn btn-danger btn-sm">刪除</a>
+                  <a href="{{ url_for('update', id=current_user.id) }}" class="btn btn-outline-warning btn-sm">更新</a>
+                  <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">登出</a>
+                  <a href="{{ url_for('delete', id=current_user.id) }}" class="btn btn-danger btn-sm">刪除</a>
+                </div>
+                <br/><br/>
+
+                <div class="col-4">
+                  <img src="{{ url_for('static', filename='images/person1.png') }}" width="200" align="right">
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-    <br/>
+<br/>
+
 
     <div class="card">
       <div class="card-header">
@@ -53,8 +66,16 @@
             {{ form.favorite_color.label(class="form-label") }}
             {{ form.favorite_color(class="form-control", value=name_to_update.favorite_color) }}
             <br/>
+            {{ form.about_author.label(class="form-label") }}
+            <!-- {{ form.about_author(class="form-control", value=name_to_update.about_author) }} -->
+            <textarea name="about_author" class="form-control">{{ name_to_update.about_author }}</textarea>
+            
+            <br/>
             {{ form.submit(class="btn btn-secondary") }}
           </form>
+              </div>
+            </div>
+          </div>
         </p>
       </div>
     </div>

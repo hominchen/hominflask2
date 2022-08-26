@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, TextAreaField
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import TextArea
 from flask_ckeditor import CKEditorField
@@ -14,6 +14,7 @@ class UserForm(FlaskForm):
     username = StringField("暱稱")  
     email = StringField("信箱", validators=[DataRequired()])
     favorite_color = StringField("喜愛的顏色")
+    about_author = TextAreaField("關於作者")
     password_hash = PasswordField('請輸入密碼', 
         validators=[DataRequired(), 
         EqualTo('password_hash2', message='密碼必須匹配')])
