@@ -337,7 +337,7 @@ def admin():
         flash('抱歉！ 你沒有相關權限...')
     return redirect(url_for('dashboard'))
 
-#12 search檢索
+#13 search檢索
 @app.route('/search', methods=['POST'])
 def search():
     form = SearchForm()
@@ -350,9 +350,7 @@ def search():
             form=form,
             searched=post.searched,
             posts = posts)
-    else:
-        flash('抱歉！ 查不到相關的結果...')
-        return render_template('index.html')
+
 @app.context_processor
 def base():
     form = SearchForm()
