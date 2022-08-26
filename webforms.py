@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, TextAreaField
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import TextArea
@@ -20,6 +21,7 @@ class UserForm(FlaskForm):
         EqualTo('password_hash2', message='密碼必須匹配')])
     # 驗證的密碼並不會被儲存到資料庫，用一個變量來承接
     password_hash2 = PasswordField('請再次輸入密碼', validators=[DataRequired()])
+    profile_pic = FileField("上傳頭像")
     submit = SubmitField("確認")
 
 #08 Hash相符測試

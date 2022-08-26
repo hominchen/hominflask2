@@ -1,17 +1,21 @@
 from enum import unique
 from flask import Flask, render_template, flash, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import NamerForm, UserForm, PasswordForm, PostForm, LoginForm, SearchForm
 from flask_ckeditor import CKEditor
+from werkzeug.utils import secure_filename
+import os
+import uuid as uuid
 
 app = Flask(__name__)
 ckeditor = CKEditor(app)
 
+UPLOAD_FOLDER = 'static/images'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = "secret key 123456987"
 
 # === SQL ===
@@ -60,6 +64,14 @@ def dashboard():
         name_to_update.favorite_color=request.form['favorite_color']
         name_to_update.username=request.form['username']
         name_to_update.about_author=request.form['about_author']
+        # upload pic
+        name_to_update.profile_pic = request.files['profile_pic']
+        pic_filename = secure_filename(name_to_update.profile_pic.filename)
+        pic_name = str(uuid.uuid1()) + "_" + pic_filename
+        # save img
+        name_to_update.profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+        # file to string
+        name_to_update.profile_pic = pic_name
         try:
             db.session.commit()
             flash('使用者已成功更新')
@@ -379,6 +391,8 @@ class Users(db.Model, UserMixin):
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     # relationship - send 暗號'poster'給Posts的db
     posts = db.relationship('Posts', backref="poster")
+    profile_pic = db.Column(db.String(256))
+
 
     # Hash password
     @property
