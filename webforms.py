@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import TextArea
+from flask_ckeditor import CKEditorField
 
 # ==== FlaskForm ====
 class NamerForm(FlaskForm):
@@ -29,8 +30,9 @@ class PasswordForm(FlaskForm):
 #10 Post
 class PostForm(FlaskForm):
     title = StringField("標題", validators=[DataRequired()])
-    content = StringField("內容", validators=[DataRequired()], widget=TextArea())
-    author = StringField("作者")
+    # content = StringField("內容", validators=[DataRequired()], widget=TextArea())
+    content = CKEditorField("內容", validators=[DataRequired()])
+    # author = StringField("作者")
     slug = StringField("文號", validators=[DataRequired()])
     submit = SubmitField("確認")
 

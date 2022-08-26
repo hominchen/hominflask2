@@ -7,8 +7,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from webforms import NamerForm, UserForm, PasswordForm, PostForm, LoginForm
+from flask_ckeditor import CKEditor
 
 app = Flask(__name__)
+ckeditor = CKEditor(app)
 
 app.config['SECRET_KEY'] = "secret key 123456987"
 

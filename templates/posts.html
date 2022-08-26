@@ -15,7 +15,7 @@
             By: {{ post.poster.name }}, {{ post.poster.email }}<br/>
             <small>文號：{{ post.slug }} | {{ post.date_posted }}</small><br/>
             <br/>
-            {{ post.content }}<br/>
+            {{ post.content|safe }}<br/>
             <br/>
             <a href="{{ url_for('post', id=post.id)}}" class="btn btn-outline-secondary btn-sm">檢視</a>
             {% if current_user.id == post.poster_id %}

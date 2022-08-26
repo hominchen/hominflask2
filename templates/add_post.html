@@ -27,6 +27,9 @@
                 <br/>
                 {{ form.submit(class="btn btn-primary") }}
             </form>
+            <!-- for content CKEditor -->
+            {{ ckeditor.load() }}
+            {{ ckeditor.config(name='content') }}
         </div>
     {% else %}
         <h2>必須先登入...</h2>
