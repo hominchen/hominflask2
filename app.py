@@ -64,23 +64,31 @@ def dashboard():
         name_to_update.favorite_color=request.form['favorite_color']
         name_to_update.username=request.form['username']
         name_to_update.about_author=request.form['about_author']
-        # upload pic
-        name_to_update.profile_pic = request.files['profile_pic']
-        pic_filename = secure_filename(name_to_update.profile_pic.filename)
-        pic_name = str(uuid.uuid1()) + "_" + pic_filename
-        # save img
-        name_to_update.profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
-        # file to string
-        name_to_update.profile_pic = pic_name
-        try:
+
+        # 確認是否有上傳圖片
+        if request.files['profile_pic']:
+            name_to_update.profile_pic = request.files['profile_pic']
+            pic_filename = secure_filename(name_to_update.profile_pic.filename)
+            pic_name = str(uuid.uuid1()) + "_" + pic_filename
+            # save img
+            name_to_update.profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
+            # file to string
+            name_to_update.profile_pic = pic_name
+            try:
+                db.session.commit()
+                flash('使用者已成功更新')
+                return render_template('dashboard.html',
+                    form=form,
+                    name_to_update=name_to_update)
+            except:
+                flash("看來有些問題，請再試試！")
+                return render_template("dashboard.html",
+                    form=form,
+                    name_to_update=name_to_update)
+        else:
             db.session.commit()
             flash('使用者已成功更新')
             return render_template('dashboard.html',
-                form=form,
-                name_to_update=name_to_update)
-        except:
-            flash("看來有些問題，請再試試！")
-            return render_template("dashboard.html",
                 form=form,
                 name_to_update=name_to_update)
     else:
@@ -195,28 +203,33 @@ def update(id):
             id=id)
 #05-3 刪除使用者
 @app.route('/delete/<int:id>')
+@login_required
 def delete(id):
-    user_to_delete = Users.query.get_or_404(id)
-    name = None
-    form = UserForm()
-    try:
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash('刪除資料成功')
+    if id == current_user.id:
+        user_to_delete = Users.query.get_or_404(id)
+        name = None
+        form = UserForm()
+        try:
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash('刪除資料成功')
 
-        our_users = Users.query.order_by(Users.date_added)
-        return render_template("add_user.html",
-            form=form,
-            name=name,
-            our_users=our_users,
-            id=id)
-    except:
-        flash('刪除使用者有錯誤，請再次確認。')
-        return render_template("add_user.html",
-            form=form,
-            name=name,
-            our_users=our_users,
-            id=id)
+            our_users = Users.query.order_by(Users.date_added)
+            return render_template("add_user.html",
+                form=form,
+                name=name,
+                our_users=our_users,
+                id=id)
+        except:
+            flash('刪除使用者有錯誤，請再次確認。')
+            return render_template("add_user.html",
+                form=form,
+                name=name,
+                our_users=our_users,
+                id=id)
+    else:
+        flash('抱歉！你沒有相關權限...')
+        return redirect(url_for('dashboard'))
 #05-4 Hash相符測試
 @app.route('/test_pw', methods=['GET', 'POST'])
 def test_pw():
