@@ -19,10 +19,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = "secret key 123456987"
 
 # === SQL ===
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 # 'mysql://使用者名:密碼@url/資料庫名'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345678@localhost/our_users2'
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://nlmjjobjxanlsu:4dc44cb4b7478a42df2f2fe81acc1968d1365c3b72161040db3b6c753fc34769@ec2-44-210-36-247.compute-1.amazonaws.com:5432/d7rsj34hduvmqm'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
