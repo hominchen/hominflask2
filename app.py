@@ -320,7 +320,7 @@ def edit_post(id):
         flash('文章已更新成功！')
         return redirect(url_for('post', id=post.id))
     # 作者id比對
-    if current_user.id == post.poster_id:
+    if current_user.id == post.poster_id or current_user.id == 1:
         form.title.data = post.title
         # form.author.data = post.author
         form.slug.data = post.slug
@@ -337,7 +337,7 @@ def edit_post(id):
 def delete_post(id):
     post_to_delete = Posts.query.get_or_404(id)
     id = current_user.id
-    if id == post_to_delete.id:
+    if id == post_to_delete.id or id == 1:
         try:
             db.session.delete(post_to_delete)
             db.session.commit()
