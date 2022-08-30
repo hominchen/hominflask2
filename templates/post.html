@@ -16,9 +16,31 @@
         <br/>
         {{ post.content|safe }}<br/>
 
-        {% if post.poster.about_author %}
-            {{ post.poster.about_author }}<br/>
-        {% endif %}
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-2">
+                    {% if post.poster.profile_pic %}
+                        <img src="{{ url_for('static', filename='images/' + post.poster.profile_pic) }}" class="img-fluid rounded-start" align="left">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/person1.png') }}" class="img-fluid rounded-start" align="left">
+                    {% endif %}
+                </div>
+
+                <div class="col-md-10">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.poster.name }}</h5>
+                        <p class="card-text">
+                            {% if post.poster.about_author %}
+                                {{ post.poster.about_author }}
+                            {% else %}
+                                作者很懶，還沒自我介紹...
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <a href="{{ url_for('posts')}}" class="btn btn-outline-secondary btn-sm">回到文章集</a>
     {% if current_user.id == post.poster_id %}
